@@ -101,6 +101,9 @@ namespace Algorithm.Logic.Domain.Models
             return Regex.IsMatch(input, @"^(X*([NSLO]+\d*)+X*)*$");
         }
 
+        /// <summary>
+        /// Devolve a posição atual do drone formatada em (X, Y)
+        /// </summary>
         public string GetCurrentPosition()
         {
             return $"({PositionX}, {PositionY})";
