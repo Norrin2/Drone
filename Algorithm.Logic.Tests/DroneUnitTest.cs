@@ -7,6 +7,12 @@ namespace Algorithm.Logic.Tests
     public class DroneUnitTest
     {
         [TestMethod]
+        public void Input_N123LSX12()
+        {
+            Assert.AreEqual("(999, 999)", Program.Evaluate("N123LSX12"));
+        }
+
+        [TestMethod]
         public void Input_NNNNNLLLLL()
         {
             Assert.AreEqual("(5, 5)", Program.Evaluate("NNNNNLLLLL"));

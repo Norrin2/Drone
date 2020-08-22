@@ -1,7 +1,7 @@
 ﻿
 namespace Algorithm.Logic
 {
-    using System;
+    using Algorithm.Logic.Domain.Models;
 
     public class Program
     {
@@ -38,7 +38,13 @@ namespace Algorithm.Logic
         public static string Evaluate(string input)
         {
             // TODO: Este método é o ponto de entrada para a lógica.
-            return "(X, Y)";
+            var drone = new Drone();
+
+            drone.ProcessInput(input);
+
+            return drone.GetCurrentPosition();
         }
+
+
     }
 }
