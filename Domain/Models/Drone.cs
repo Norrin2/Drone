@@ -50,29 +50,37 @@ namespace Algorithm.Logic.Domain.Models
                 PositionX -= steps;
         }
 
-
+        /// <summary>
+        /// Processa os inputs e movimenta o drone baseado na string enviada
+        /// </summary>
+        /// <param name="input">String no padrão "N1N2S3S4L5L6O7O8X"</param>
         public void ProcessInput(string input)
         {
             if (ValidateInput(input))
             {
+                //Separa os inputs por cancelamento
                 var directionsWithCancels = Regex.Split(input, @"([NLOS\d]*X+)");
 
                 List<string> directionsToBeProcessed = new List<string>();
 
                 foreach (var direction in directionsWithCancels)
                 {
+                    //Conta o número de comandos de cancelamento e os remove
                     var cancels = direction.Count(c => c == 'X');
                     var directions = Regex.Replace(direction, "X", "");
 
+                    //Separa cada comando dos inputs
                     List<string> commands = Regex.Split(directions, @"([NSLO]\d*)")
                             .Where(c => !string.IsNullOrEmpty(c))
                             .ToList();
 
+                    //Remove comandos cancelados
                     commands.RemoveRange(commands.Count() - cancels, cancels);
 
                     directionsToBeProcessed.AddRange(commands);
                 }
 
+                //Executa os comandos
                 directionsToBeProcessed.ForEach(d =>
                                        MoveInDirection((Direction)d[0], d.Length > 1 ? Convert.ToInt32(d.Substring(1, d.Length - 1)) : 1));
             }
@@ -87,6 +95,7 @@ namespace Algorithm.Logic.Domain.Models
         {
             if (String.IsNullOrWhiteSpace(input)) return false;
 
+            // Retorna inválido caso haja um comando com número de passos maior que o permitido
             if (Regex.IsMatch(input, @"(" + MAX_NUMBER_STEPS.ToString() + ")(?!X)")) return false;
 
             return Regex.IsMatch(input, @"^(X*([NSLO]+\d*)+X*)*$");
