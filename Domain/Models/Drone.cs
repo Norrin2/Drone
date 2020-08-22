@@ -87,7 +87,7 @@ namespace Algorithm.Logic.Domain.Models
         {
             if (String.IsNullOrWhiteSpace(input)) return false;
 
-            if (Regex.IsMatch(input, @"(2147483647)(?!X)")) return false;
+            if (Regex.IsMatch(input, @"(" + MAX_NUMBER_STEPS.ToString() + ")(?!X)")) return false;
 
             return Regex.IsMatch(input, @"^(X*([NSLO]+\d*)+X*)*$");
         }
