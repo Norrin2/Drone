@@ -33,21 +33,29 @@ namespace Algorithm.Logic.Domain.Models
         /// <summary>
         /// Movimenta o Drone em passo em uma determinada direção
         /// </summary>
-        /// <param name="direction">Direção da movimentação do drone</param>
-        /// <param name="steps">Número de passos a movimentar</param>
-        private void MoveInDirection(Direction direction, int steps)
+        /// <param name="movement">Direção da movimentação do drone e passos</param>
+        private void Move(Movement movement)
         {
-            if (direction == Direction.North)
-                PositionY += steps;
+            if (movement == null)
+                throw new ArgumentNullException("Movimento nulo");
 
-            if (direction == Direction.South)
-                PositionY -= steps;
-
-            if (direction == Direction.East)
-                PositionX += steps;
-
-            if (direction == Direction.West)
-                PositionX -= steps;
+            switch (movement.Direction)
+            {
+                case Direction.North:
+                    PositionY += movement.Steps;
+                    break;
+                case Direction.South:
+                    PositionY -= movement.Steps;
+                    break;
+                case Direction.East:
+                    PositionX += movement.Steps;
+                    break;
+                case Direction.West:
+                    PositionX -= movement.Steps;
+                    break;
+                default:
+                    throw new ArgumentException("Direção inválida");
+            }
         }
 
         /// <summary>
@@ -59,30 +67,29 @@ namespace Algorithm.Logic.Domain.Models
             if (ValidateInput(input))
             {
                 //Separa os inputs por cancelamento
-                var directionsWithCancels = Regex.Split(input, @"([NLOS\d]*X+)");
+                var movmentsWithCancels = Regex.Split(input, @"([NLOS\d]*X+)");
 
-                List<string> directionsToBeProcessed = new List<string>();
+                List<string> movementsToBeProcessed = new List<string>();
 
-                foreach (var direction in directionsWithCancels)
+                foreach (var movement in movmentsWithCancels)
                 {
                     //Conta o número de comandos de cancelamento e os remove
-                    var cancels = direction.Count(c => c == 'X');
-                    var directions = Regex.Replace(direction, "X", "");
+                    var cancels = movement.Count(cancel => cancel == 'X');
+                    var movementsWithoutCancels = Regex.Replace(movement, "X", "");
 
-                    //Separa cada comando dos inputs
-                    List<string> commands = Regex.Split(directions, @"([NSLO]\d*)")
-                            .Where(c => !string.IsNullOrEmpty(c))
-                            .ToList();
+                    //Separa cada movimento dos inputs
+                    List<string> movementInputs = Regex.Split(movementsWithoutCancels, @"([NSLO]\d*)")
+                                                 .Where(command => !string.IsNullOrEmpty(command))
+                                                 .ToList();
 
-                    //Remove comandos cancelados
-                    commands.RemoveRange(commands.Count() - cancels, cancels);
+                    //Remove movimentos cancelados
+                    movementInputs.RemoveRange(movementInputs.Count() - cancels, cancels);
 
-                    directionsToBeProcessed.AddRange(commands);
+                    movementsToBeProcessed.AddRange(movementInputs);
                 }
 
-                //Executa os comandos
-                directionsToBeProcessed.ForEach(d =>
-                                       MoveInDirection((Direction)d[0], d.Length > 1 ? Convert.ToInt32(d.Substring(1, d.Length - 1)) : 1));
+                //Executa os movimentos
+                movementsToBeProcessed.ForEach(movementInput => Move(new Movement(movementInput)));
             }
             else
             {
@@ -93,7 +100,7 @@ namespace Algorithm.Logic.Domain.Models
 
         private bool ValidateInput(string input)
         {
-            if (String.IsNullOrWhiteSpace(input)) return false;
+            if (string.IsNullOrWhiteSpace(input)) return false;
 
             // Retorna inválido caso haja um comando com número de passos maior que o permitido
             if (Regex.IsMatch(input, @"(" + MAX_NUMBER_STEPS.ToString() + ")(?!X)")) return false;
