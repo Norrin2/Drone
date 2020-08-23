@@ -89,7 +89,13 @@ namespace Algorithm.Logic.Domain.Models
                 }
 
                 //Executa os movimentos
-                movementsToBeProcessed.ForEach(movementInput => Move(new Movement(movementInput)));
+                try
+                {
+                    movementsToBeProcessed.ForEach(movementInput => Move(new Movement(movementInput)));
+                } catch
+                {
+                    MoveToPositionXY(999, 999);
+                }
             }
             else
             {

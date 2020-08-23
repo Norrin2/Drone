@@ -20,6 +20,11 @@ namespace Algorithm.Logic.Domain.Models
                 Steps = 1;
         }
 
+        /// <summary>
+        /// Valida o movimento baseado nas regras de negócio. Vale ressaltar que foram usadas exceções a fim de manter o
+        /// projeto simples, porém em uma aplicação real exceções são custosas e faria uso de uma biblioteca de validação
+        /// como Flunt ou FluentValidation
+        /// </summary>
         private void Validate(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
